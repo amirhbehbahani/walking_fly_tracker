@@ -1,0 +1,55 @@
+<launch>
+  <arg name="camera_name" default="camera" />
+  <arg name="camera_serial" default="0" />
+  <arg name="calibrated" default="0" />
+
+  <group ns="$(arg camera_name)">
+
+    <node pkg="nodelet" type="nodelet" name="camera_nodelet_manager" args="manager" />
+
+    <node pkg="nodelet" type="nodelet" name="camera_nodelet" args="load pointgrey_camera_driver/PointGreyCameraNodelet camera_nodelet_manager" >
+        <param name="camera_info_url" if="$(arg calibrated)" value="file://$(env HOME)/.ros/camera_info/$(arg camera_serial).yaml" />
+        <param name="frame_id" value="camera" />
+        <param name="serial" value="$(arg camera_serial)" />
+        <param name="video_mode" value="format7_mode0"/>
+        <param name="frame_rate" value="30" /> 
+        <param name="auto_exposure"  value="false"/>
+        <param name="exposure"  value="0"/>
+        <param name="auto_shutter" value="false"/>
+        <param name="shutter_speed" value="0.006"/>
+        <param name="auto_gain" value="false"/>
+        <param name="gain" value="0"/>
+        <param name="brightness" value="0"/>
+        <param name="auto_sharpness" value="false"/>
+        <param name="sharpness" value="0"/>
+        <param name="auto_saturation" value="false"/>
+        <param name="saturation" value="0"/>
+        <param name="gamma" value="1.0"/>
+        <param name="format7_roi_width" value="640"/>
+        <param name="format7_roi_height" value="480"/>
+        <param name="format7_roi_x_offset" value="0"/>
+        <param name="format7_roi_y_offset" value="0"/>
+        <param name="format7_color_coding" value="mono8"/>
+        <param name="enable_trigger" value="false"/>
+        <param name="trigger_mode" value="mode0"/>
+        <param name="trigger_source" value="gpio0"/>
+        <param name="trigger_polarity" value="0" />
+        <param name="enable_trigger_delay" value="false"/>
+        <param name="trigger_delay" value="0" />
+        <param name="trigger_parameter" value="0"/>
+        <param name="enable_strobe1" value="false"/>
+        <param name="strobe1_polarity" value="0"/>
+        <param name="strobe1_delay" value="0"/>
+        <param name="strobe1_duration" value="0"/>
+        <param name="enable_strobe2" value="false"/>
+        <param name="strobe2_polarity" value="0"/>
+        <param name="strobe2_delay" value="0"/>
+        <param name="strobe2_duration" value="0"/>
+    </node>
+
+    <node pkg="nodelet" type="nodelet" name="image_proc_debayer"
+          args="load image_proc/debayer camera_nodelet_manager">
+    </node>
+
+  </group>
+</launch>
